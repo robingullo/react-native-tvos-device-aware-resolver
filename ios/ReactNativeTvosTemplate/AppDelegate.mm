@@ -27,7 +27,8 @@
   if (!packagerServerHostPort) {
     return [bundleUrlProvider jsBundleURLForFallbackExtension:nil];
   } else {
-    NSDictionary *additionalOptions =  @{ @"resolver.isTv" : @"true" };
+    Boolean isTv = [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomTV;
+    NSDictionary *additionalOptions =  isTv ? @{ @"resolver.isTv" : @"true" } : nil;
     
     return [RCTBundleURLProvider jsBundleURLForBundleRoot:@"index"
                                              packagerHost:packagerServerHostPort
