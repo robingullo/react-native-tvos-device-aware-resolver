@@ -22,7 +22,23 @@
 - (NSURL *)bundleURL
 {
 #if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
+  RCTBundleURLProvider *bundleUrlProvider = [RCTBundleURLProvider sharedSettings];
+  NSString *packagerServerHostPort = [bundleUrlProvider packagerServerHostPort];
+  if (!packagerServerHostPort) {
+    return [bundleUrlProvider jsBundleURLForFallbackExtension:nil];
+  } else {
+    NSDictionary *additionalOptions =  @{ @"resolver.isTv" : @"true" };
+    
+    return [RCTBundleURLProvider jsBundleURLForBundleRoot:@"index"
+                                             packagerHost:packagerServerHostPort
+                                           packagerScheme:[bundleUrlProvider packagerScheme]
+                                                enableDev:[bundleUrlProvider enableDev]
+                                       enableMinification:[bundleUrlProvider enableMinification]
+                                          inlineSourceMap:[bundleUrlProvider inlineSourceMap]
+                                              modulesOnly:NO
+                                                runModule:YES
+                                        additionalOptions:additionalOptions];
+  }
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
